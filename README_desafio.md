@@ -67,13 +67,14 @@
 # Parte 2
 A implementação será feita em um notebook Databricks utilizando Python e PySpark.
 Cada etapa (extração, transformação, carregamento) será documentada com comentários explicando as operações realizadas.
-# Extração dos dados
+
+1. Extração dos dados
 df = spark.read.csv("https://storage.googleapis.com/covid19-open-data/v3/latest/aggregated.csv", header=True, inferSchema=True)
 
-# Transformação dos dados
+2. Transformação dos dados
 df_cleaned = df.na.drop().filter("location_key IS NOT NULL")
 
-# Carregamento dos dados
+3. Carregamento dos dados
 df_cleaned.write.format("delta").mode("overwrite").save("/mnt/delta/covid19_data")
 
 # Parte 3
@@ -82,42 +83,41 @@ Formato escolhido: Delta Lake
 Justificativa: O Delta Lake oferece recursos como gerenciamento de transações ACID, otimização automática e suporte a versionamento, que são cruciais para a confiabilidade e performance em ambientes de análise de grandes volumes de dados
 
 # Parte 4
-# Análises Descritivas
+- Análises Descritivas
 
-Realizar análises como: 
+1. Realizar análises como: 
     - Total de casos, mortes e recuperações por região.
     - Evolução temporal de casos e mortes.
     - Visualizações em gráficos de linha, barras e mapas.
 
-# Exemplo de agregação
+2. Exemplo de agregação
 df_summary = df_cleaned.groupBy("location_key").agg(sum("new_confirmed").alias("total_cases"))
 
-# Exemplo de visualização
+3. Exemplo de visualização
 display(df_summary) 
 
 A análise revelará, por exemplo, as regiões mais afetadas, padrões de crescimento, e períodos de pico. Insights serão documentados no próprio notebook
 
 # Parte 5
-# Segurança dos Dados durante o ETL
+1. Segurança dos Dados durante o ETL
 
-Garantia de Segurança:
-    - Uso de SSL para transferências de dados.
-    - Controle de acesso baseado em funções (RBAC) para acesso aos notebooks e dados no Databricks.
-    - Auditoria de logs para rastreamento de acesso e modificações.
+    - Garantia de Segurança:
+        - Uso de SSL para transferências de dados.
+        - Controle de acesso baseado em funções (RBAC) para acesso aos notebooks e dados no Databricks.
+        - Auditoria de logs para rastreamento de acesso e modificações.
 
-Medidas de Segurança Implementadas:
+2. Medidas de Segurança Implementadas:
     - Dados sensíveis, como informações pessoais, serão anonimizados.
     - Armazenamento criptografado no Delta Lake.
 
 # Parte 6
-# Monitoramento do Pipeline de ETL
+1. Monitoramento do Pipeline de ETL
+    - Estratégia de Monitoramento:
+        - Monitoramento de tarefas do Spark usando o Spark UI e métricas de performance.
+        - Monitoramento contínuo dos dados carregados usando Delta Lake para detecção de anomalias.
+        - Alertas configurados no Databricks para falhas ou atrasos no pipeline.
 
-Estratégia de Monitoramento:
-    - Monitoramento de tarefas do Spark usando o Spark UI e métricas de performance.
-    - Monitoramento contínuo dos dados carregados usando Delta Lake para detecção de anomalias.
-    - Alertas configurados no Databricks para falhas ou atrasos no pipeline.
-
-Métricas a serem Monitoradas:
+2. Métricas a serem Monitoradas:
     - Tempo de execução das tarefas de ETL.
     - Integridade dos dados (percentual de valores nulos, consistência de registros).
     - Performance de consultas (tempo de resposta, número de registros retornados).
